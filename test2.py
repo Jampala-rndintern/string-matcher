@@ -1,18 +1,26 @@
 import pandas as pd
+import os
+from fuzzywuzzy import fuzz
 
 def comparitor(p360,SFL):
     k=0
     i=0
     j=0
+    count=0
+
     presense=[]
+    per_count=[]
     while j < len(SFL):
         if i==len(p360):
             break
         string=p360[i]
         ser_str=SFL[j]
+        
+  
         while len(ser_str) < len (string):
             j+=1
             ser_str=SFL[j]
+            
 
         #print(string)
         #print(ser_str,"\n")
@@ -27,26 +35,34 @@ def comparitor(p360,SFL):
         elif string[k]<ser_str[k] and string[:k-1] == ser_str[:k-1] and k < len(string):
             k=0
             j-=1
-            print(p360[i], "                            object not found")
+            #print(p360[i], "                            object not found")
             presense.append("no")
-            i+=1    
+            i+=1
+            per_count.append(fuzz.ratio(string, ser_str))    
+            
         else:
             k=0    
            
         if k==len(string) and string[:k-1] == ser_str[:k-1]:
-               print(p360[i],"                         object found")
+            #   print(p360[i],"                         object found")
                presense.append("yes")
+               count+=1
                k=0
                i+=1
+               per_count.append(fuzz.ratio(string, ser_str))
         #if k==len(string) and 
         j+=1
-    writer = pd.ExcelWriter('demo.xlsx', engine='xlsxwriter')
-    writer.save()
+    
+    print("\n\n\n------------------total number of matches found",count,"--------------------------------- ")
     df = pd.DataFrame({'Company Name': p360,
-                   'Presense': presense})
+                   'Presense': presense,'percentage':per_count})
+    
+    df=df.sort_values("Presense",ascending=False)
+    
     writer = pd.ExcelWriter('demo.xlsx', engine='xlsxwriter')
     df.to_excel(writer, sheet_name='Sheet1', index=False)
     writer.save()
+    os.system("start EXCEL.EXE demo.xlsx")
     
         
 
