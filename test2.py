@@ -28,14 +28,14 @@ def comparitor(p360,SFL):
             k=0
             j-=1
             print(p360[i], "                            object not found")
-            presense.append("object found")
+            presense.append("no")
             i+=1    
         else:
             k=0    
            
         if k==len(string) and string[:k-1] == ser_str[:k-1]:
                print(p360[i],"                         object found")
-               presense.append("object not found")
+               presense.append("yes")
                k=0
                i+=1
         #if k==len(string) and 
