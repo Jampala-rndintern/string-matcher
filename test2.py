@@ -1,22 +1,25 @@
+from tabnanny import check
 import pandas as pd
 import os
 from fuzzywuzzy import fuzz
 
+
+
+  
 def comparitor(p360,SFL):
     k=0
     i=0
     j=0
     count=0
-
+    check=[]
     presense=[]
     per_count=[]
     while j < len(SFL):
         if i==len(p360):
             break
-        string=p360[i]
-        ser_str=SFL[j]
+        string=p360[i].lstrip()
+        ser_str=SFL[j].lstrip()
         
-  
         while len(ser_str) < len (string):
             j+=1
             ser_str=SFL[j]
@@ -37,30 +40,38 @@ def comparitor(p360,SFL):
             j-=1
             #print(p360[i], "                            object not found")
             presense.append("no")
+            per_count.append(fuzz.ratio(string, ser_str))  
+            if per_count[i]>80:
+                check.append("!!! recheck !!!")
+            else:
+                check.append("likely not found")
             i+=1
-            per_count.append(fuzz.ratio(string, ser_str))    
-            
         else:
             k=0    
            
         if k==len(string) and string[:k-1] == ser_str[:k-1]:
             #   print(p360[i],"                         object found")
-               presense.append("yes")
-               count+=1
-               k=0
-               i+=1
-               per_count.append(fuzz.ratio(string, ser_str))
+            presense.append("yes")
+            per_count.append(fuzz.ratio(string, ser_str))
+            if  per_count[i]==100:
+                check.append("✔️perfect match")
+            elif per_count[i]<100:
+                check.append("!!!matched not perfect")
+            count+=1
+            k=0
+            i+=1
+            
         #if k==len(string) and 
         j+=1
     
-    print("\n\n\n------------------total number of matches found",count,"--------------------------------- ")
+    print("\n\n\n------------------total number of matches found",count,"--------------------------------- \n\n\n")
     df = pd.DataFrame({'Company Name': p360,
-                   'Presense': presense,'percentage':per_count})
+                   'Presense': presense,'percentage':per_count,'conclusion':check})
     
-    df=df.sort_values("Presense",ascending=False)
+    #df=df.sort_values("Presense",ascending=False)
     
     writer = pd.ExcelWriter('demo.xlsx', engine='xlsxwriter')
-    df.to_excel(writer, sheet_name='Sheet1', index=False)
+    df.to_excel(writer, sheet_name='Sheet1', index=False)        
     writer.save()
     os.system("start EXCEL.EXE demo.xlsx")
     
