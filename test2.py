@@ -76,8 +76,9 @@ def comparitor(p360,SFL,p360_rct,sfl_rtc):
             i+=1
             j-=1
         else:
-            k=0    
-        if k== min( len(string),len(ser_str)) and string[:k-1] == ser_str[:k-1]:
+            k=0 
+           
+        if k== max(3,min( len(string),len(ser_str))) and string[:k-1] == ser_str[:k-1]:
            #print(p360[i],"                         object found")
             presense.append("yes")
             per_count.append(dist.edit_distance(ser_str,string))
